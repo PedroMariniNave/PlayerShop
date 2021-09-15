@@ -1,0 +1,89 @@
+Inventory:
+  title: "Editar Loja"
+  size: 54
+  items:
+    glass:
+      type: GLASS
+      lore:
+        - '&7Clique para selecionar!'
+      slot: 11
+    white:
+      type: WHITE_STAINED_GLASS
+      lore:
+        - '&7Clique para selecionar!'
+      slot: 12
+    orange:
+      type: ORANGE_STAINED_GLASS
+      lore:
+        - '&7Clique para selecionar!'
+      slot: 13
+    magenta:
+      type: MAGENTA_STAINED_GLASS
+      lore:
+        - '&7Clique para selecionar!'
+      slot: 14
+    light_blue:
+      type: LIGHT_BLUE_STAINED_GLASS
+      lore:
+        - '&7Clique para selecionar!'
+      slot: 15
+    yellow:
+      type: YELLOW_STAINED_GLASS
+      lore:
+        - '&7Clique para selecionar!'
+      slot: 20
+    lime:
+      type: LIME_STAINED_GLASS
+      lore:
+        - '&7Clique para selecionar!'
+      slot: 21
+    pink:
+      type: PINK_STAINED_GLASS
+      lore:
+        - '&7Clique para selecionar!'
+      slot: 22
+    gray:
+      type: GRAY_STAINED_GLASS
+      lore:
+        - '&7Clique para selecionar!'
+      slot: 23
+    light_gray:
+      type: LIGHT_GRAY_STAINED_GLASS
+      lore:
+        - '&7Clique para selecionar!'
+      slot: 24
+    cyan:
+      type: CYAN_STAINED_GLASS
+      lore:
+        - '&7Clique para selecionar!'
+      slot: 29
+    purple:
+      type: PURPLE_STAINED_GLASS
+      lore:
+        - '&7Clique para selecionar!'
+      slot: 30
+    blue:
+      type: BLUE_STAINED_GLASS
+      lore:
+        - '&7Clique para selecionar!'
+      slot: 31
+    brown:
+      type: BROWN_STAINED_GLASS
+      lore:
+        - '&7Clique para selecionar!'
+      slot: 32
+    green:
+      type: GREEN_STAINED_GLASS
+      lore:
+        - '&7Clique para selecionar!'
+      slot: 33
+    red:
+      type: RED_STAINED_GLASS
+      lore:
+        - '&7Clique para selecionar!'
+      slot: 38
+    black:
+      type: BLACK_STAINED_GLASS
+      lore:
+        - '&7Clique para selecionar!'
+      slot: 39

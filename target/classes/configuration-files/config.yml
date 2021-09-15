@@ -1,0 +1,73 @@
+MySQL:
+  enabled: false
+  host: 'localhost'
+  database: 'db'
+  username: 'user'
+  password: 'pass'
+  port: 3306
+
+Settings:
+  buy-hologram:
+    - '&6&lLOJA'
+    - ''
+    - '&7Vendedor: &f{player}'
+    - '&7Valor de compra: &e{buy_price}'
+    - ''
+    - '&7Item: &f{item}'
+    - '&7Quantia: &f{amount}'
+  sell-hologram:
+    - '&6&lLOJA'
+    - ''
+    - '&7Vendedor: &f{player}'
+    - '&7Valor de venda: &e{sell_price}'
+    - ''
+    - '&7Item: &f{item}'
+    - '&7Quantia: &f{amount}'
+  both-hologram:
+    - '&6&lLOJA'
+    - ''
+    - '&7Vendedor: &f{player}'
+    - '&7Valor de compra: &e{buy_price}'
+    - '&7Valor de venda: &e{sell_price}'
+    - ''
+    - '&7Item: &f{item}'
+    - '&7Quantia: &f{amount}'
+  chest-inventory-name: 'Loja - Baú'
+
+Messages:
+  buy-successful: '&6&lVoltz&f&lMC &8&l➜ &aCompra efetuada com sucesso!'
+  sell-successful: '&6&lVoltz&f&lMC &8&l➜ &aVenda efetuada com sucesso!'
+  invalid-price: '&6&lVoltz&f&lMC &8&l➜ &cO valor ainda não foi definido!'
+  need-space-player: '&6&lVoltz&f&lMC &8&l➜ &cVocê não possui espaço suficiente no seu inventário!'
+  need-space-shop: '&6&lVoltz&f&lMC &8&l➜ &cA loja não possui espaço suficiente!'
+  without-permission: '&6&lVoltz&f&lMC &8&l➜ &cVocê não pode criar uma loja nesse local!'
+  insufficient-items-player: '&6&lVoltz&f&lMC &8&l➜ &cVocê não possui itens suficientes!'
+  insufficient-items-shop: '&6&lVoltz&f&lMC &8&l➜ &cA loja não possui itens suficientes!'
+  insufficient-money-player: '&6&lVoltz&f&lMC &8&l➜ &cVocê não possui coins suficientes!'
+  insufficient-money-owner: '&6&lVoltz&f&lMC &8&l➜ &cO dono dessa loja não possui coins suficientes!'
+  need-look: '&6&lVoltz&f&lMC &8&l➜ &cVocê precisa estar olhando para um bloco!'
+  need-item: '&6&lVoltz&f&lMC &8&l➜ &cVocê precisa estar segurando um item!'
+  has-shop: '&6&lVoltz&f&lMC &8&l➜ &cJá existe uma loja nesse local!'
+  invalid-value: '&6&lVoltz&f&lMC &8&l➜ &cO valor inserido é inválido!'
+  shop-created: '&6&lVoltz&f&lMC &8&l➜ &aLoja criada com sucesso!'
+  buy-price:
+    - '&6&lVoltz&f&lMC &8&l➜ &7Digite no chat o valor que deseja quando o cliente for &fCOMPRAR&7!'
+    - '&6&lVoltz&f&lMC &8&l➜ &7Lembre-se que você pode usar números formatados! Exemplos: &f100k&7, &f100B&7.'
+  sell-price:
+    - '&6&lVoltz&f&lMC &8&l➜ &7Digite no chat o valor que deseja quando o cliente for &fVENDER&7!'
+    - '&6&lVoltz&f&lMC &8&l➜ &7Lembre-se que você pode usar números formatados! Exemplos: &f100k&7, &f100B&7.'
+  edit-amount:
+    - '&6&lVoltz&f&lMC &8&l➜ &7Digite no chat a quantia que deseja!'
+
+NumberFormatter:
+  - "k"
+  - "M"
+  - "B"
+  - "T"
+  - "Q"
+  - "QQ"
+  - "S"
+  - "SS"
+  - "O"
+  - "N"
+  - "D"
