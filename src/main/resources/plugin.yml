@@ -4,7 +4,7 @@ version: ${project.version}
 api-version: 1.16
 author: zPedroo_
 main: com.zpedroo.playershop.PlayerShop
-depend: [ProtocolLib, HolographicDisplays]
+depend: [ProtocolLib, HolographicDisplays, MultiEconomy]
 commands:
   createshop:
     aliases: [criarloja]

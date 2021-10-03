@@ -1,7 +1,19 @@
 package com.zpedroo.playershop.enums;
 
+import static com.zpedroo.playershop.utils.config.Settings.*;
+
 public enum ShopType {
-    BUY,
-    SELL,
-    BOTH
+    BUY(BUY_TRANSLATION),
+    SELL(SELL_TRANSLATION),
+    BOTH(BOTH_TRANSLATION);
+
+    private String translation;
+
+    ShopType(String translation) {
+        this.translation = translation;
+    }
+
+    public String getTranslation() {
+        return translation;
+    }
 }

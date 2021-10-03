@@ -2,87 +2,87 @@ Inventory:
   title: "Editar Loja"
   size: 54
   items:
-    glass:
+    1:
       type: GLASS
       lore:
         - '&7Clique para selecionar!'
       slot: 11
-    white:
+    2:
       type: WHITE_STAINED_GLASS
       lore:
         - '&7Clique para selecionar!'
       slot: 12
-    orange:
+    3:
       type: ORANGE_STAINED_GLASS
       lore:
         - '&7Clique para selecionar!'
       slot: 13
-    magenta:
+    4:
       type: MAGENTA_STAINED_GLASS
       lore:
         - '&7Clique para selecionar!'
       slot: 14
-    light_blue:
+    5:
       type: LIGHT_BLUE_STAINED_GLASS
       lore:
         - '&7Clique para selecionar!'
       slot: 15
-    yellow:
+    6:
       type: YELLOW_STAINED_GLASS
       lore:
         - '&7Clique para selecionar!'
       slot: 20
-    lime:
+    7:
       type: LIME_STAINED_GLASS
       lore:
         - '&7Clique para selecionar!'
       slot: 21
-    pink:
+    8:
       type: PINK_STAINED_GLASS
       lore:
         - '&7Clique para selecionar!'
       slot: 22
-    gray:
+    9:
       type: GRAY_STAINED_GLASS
       lore:
         - '&7Clique para selecionar!'
       slot: 23
-    light_gray:
+    10:
       type: LIGHT_GRAY_STAINED_GLASS
       lore:
         - '&7Clique para selecionar!'
       slot: 24
-    cyan:
+    11:
       type: CYAN_STAINED_GLASS
       lore:
         - '&7Clique para selecionar!'
       slot: 29
-    purple:
+    12:
       type: PURPLE_STAINED_GLASS
       lore:
         - '&7Clique para selecionar!'
       slot: 30
-    blue:
+    13:
       type: BLUE_STAINED_GLASS
       lore:
         - '&7Clique para selecionar!'
       slot: 31
-    brown:
+    14:
       type: BROWN_STAINED_GLASS
       lore:
         - '&7Clique para selecionar!'
       slot: 32
-    green:
+    15:
       type: GREEN_STAINED_GLASS
       lore:
         - '&7Clique para selecionar!'
       slot: 33
-    red:
+    16:
       type: RED_STAINED_GLASS
       lore:
         - '&7Clique para selecionar!'
       slot: 38
-    black:
+    17:
       type: BLACK_STAINED_GLASS
       lore:
         - '&7Clique para selecionar!'

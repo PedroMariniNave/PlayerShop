@@ -2,8 +2,8 @@ package com.zpedroo.playershop.managers;
 
 import com.zpedroo.playershop.PlayerShop;
 import com.zpedroo.playershop.mysql.DBConnection;
-import com.zpedroo.playershop.shop.Shop;
-import com.zpedroo.playershop.utils.cache.ShopDataCache;
+import com.zpedroo.playershop.objects.Shop;
+import com.zpedroo.playershop.utils.cache.DataCache;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -18,12 +18,11 @@ public class ShopManager {
     private static ShopManager instance;
     public static ShopManager getInstance() { return instance; }
 
-    private ShopDataCache shopDataCache;
+    private DataCache dataCache;
 
     public ShopManager() {
         instance = this;
-        this.shopDataCache = new ShopDataCache();
-
+        this.dataCache = new DataCache();
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -41,19 +40,17 @@ public class ShopManager {
     }
 
     public Shop getShop(Location location) {
-        if (!getDataCache().getShops().containsKey(serializeLocation(location))) return null;
-
-        return getDataCache().getShops().get(serializeLocation(location));
+        return dataCache.getShops().get(location);
     }
 
     public void saveAll() {
-        new HashSet<>(getDataCache().getDeletedShops()).forEach(shop -> {
+        new HashSet<>(dataCache.getDeletedShops()).forEach(shop -> {
             DBConnection.getInstance().getDBManager().deleteShop(shop);
         });
 
-        getDataCache().getDeletedShops().clear();
+        dataCache.getDeletedShops().clear();
 
-        new HashSet<>(getDataCache().getShops().values()).forEach(shop -> {
+        new HashSet<>(dataCache.getShops().values()).forEach(shop -> {
             if (shop == null) return;
             if (!shop.isQueueUpdate()) return;
 
@@ -86,10 +83,10 @@ public class ShopManager {
     }
 
     private void loadShops() {
-        getDataCache().setShops(DBConnection.getInstance().getDBManager().getShops());
+        dataCache.setShops(DBConnection.getInstance().getDBManager().getShops());
     }
 
-    public ShopDataCache getDataCache() {
-        return shopDataCache;
+    public DataCache getCache() {
+        return dataCache;
     }
 }

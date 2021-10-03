@@ -1,10 +1,11 @@
 package com.zpedroo.playershop;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,14 +16,12 @@ public class FileUtils {
     private static FileUtils instance;
     public static FileUtils get() { return instance; }
 
-    private static String CHARSET_NAME = "UTF-8";
-
-    private PlayerShop playerShop;
+    private Plugin plugin;
     private Map<Files, FileManager> files;
 
-    public FileUtils(PlayerShop playerShop) {
+    public FileUtils(Plugin plugin) {
         instance = this;
-        this.playerShop = playerShop;
+        this.plugin = plugin;
         this.files = new HashMap<>(Files.values().length);
 
         for (Files files : Files.values()) {
@@ -108,32 +107,28 @@ public class FileUtils {
     }
 
     public enum Files {
-        CONFIG("config", "yml", "configuration-files", ""),
-        CREATE_SHOP("createshop", "yml", "menus", "menus"),
-        EDIT_SHOP("editshop", "yml", "menus", "menus"),
-        EDIT_TYPE("edittype", "yml", "menus", "menus"),
-        CHOOSE("choose", "yml", "menus", "menus"),
-        DISPLAY("display", "yml", "menus", "menus"),
-        SHOP("shop", "yml", "menus", "menus");
+        CONFIG("config", "configuration-files", ""),
+        CREATE_SHOP("create_shop", "menus", "menus"),
+        EDIT_SHOP("edit_shop", "menus", "menus"),
+        EDIT_TYPE("edit_type", "menus", "menus"),
+        EDIT_CURRENCY("edit_currency", "menus", "menus"),
+        SELECT_CURRENCY("select_currency", "menus", "menus"),
+        CHOOSE("choose", "menus", "menus"),
+        DISPLAY("display", "menus", "menus"),
+        SHOP("shop", "menus", "menus");
 
-        public String name;
-        public String extension;
-        public String resource;
-        public String folder;
+        private String name;
+        private String resource;
+        private String folder;
 
-        Files(String name, String extension, String resource, String folder) {
+        Files(String name, String resource, String folder) {
             this.name = name;
-            this.extension = extension;
             this.resource = resource;
             this.folder = folder;
         }
 
         public String getName() {
             return name;
-        }
-
-        public String getExtension() {
-            return extension;
         }
 
         public String getResource() {
@@ -147,44 +142,42 @@ public class FileUtils {
 
     public class FileManager {
 
-        private File pdfile;
-        private FileConfiguration language;
+        private File file;
+        private FileConfiguration fileConfig;
 
         public FileManager(Files file) {
-            this.pdfile = new File(playerShop.getDataFolder() + (file.getFolder().isEmpty() ? "" : "/" + file.getFolder()), file.getName() + '.' + file.getExtension());
+            this.file = new File(plugin.getDataFolder() + (file.getFolder().isEmpty() ? "" : "/" + file.getFolder()), file.getName() + ".yml");
 
-            if (!pdfile.exists()) {
+            if (!this.file.exists()) {
                 try {
-                    pdfile.getParentFile().mkdirs();
-                    pdfile.createNewFile();
+                    this.file.getParentFile().mkdirs();
+                    this.file.createNewFile();
 
-                    copy(playerShop.getResource((file.getResource().isEmpty() ? "" : file.getResource() + "/") + file.getName() + '.' + file.getExtension()), pdfile);
+                    copy(plugin.getResource((file.getResource().isEmpty() ? "" : file.getResource() + "/") + file.getName() + ".yml"), this.file);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
 
-            if (!StringUtils.equals(file.getExtension(), "yml")) return;
-
             try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(pdfile), CHARSET_NAME));
-                language = YamlConfiguration.loadConfiguration(reader);
+                BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.file), StandardCharsets.UTF_8));
+                fileConfig = YamlConfiguration.loadConfiguration(reader);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
         public FileConfiguration get() {
-            return language;
+            return fileConfig;
         }
 
         public File getFile() {
-            return pdfile;
+            return file;
         }
 
         public void save() {
             try {
-                language.save(pdfile);
+                fileConfig.save(file);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -192,7 +185,7 @@ public class FileUtils {
 
         public void reload() {
             try {
-                language = YamlConfiguration.loadConfiguration(pdfile);
+                fileConfig = YamlConfiguration.loadConfiguration(file);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

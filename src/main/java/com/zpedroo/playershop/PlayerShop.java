@@ -1,16 +1,17 @@
 package com.zpedroo.playershop;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
 import com.zpedroo.playershop.commands.CreateShopCmd;
-import com.zpedroo.playershop.hooks.ProtocolLib;
-import com.zpedroo.playershop.hooks.Vault;
-import com.zpedroo.playershop.hooks.WorldGuard;
+import com.zpedroo.playershop.hooks.ProtocolLibHook;
+import com.zpedroo.playershop.hooks.VaultHook;
+import com.zpedroo.playershop.hooks.WorldGuardHook;
 import com.zpedroo.playershop.listeners.PlayerChatListener;
 import com.zpedroo.playershop.listeners.ShopListeners;
 import com.zpedroo.playershop.managers.ShopManager;
 import com.zpedroo.playershop.mysql.DBConnection;
 import com.zpedroo.playershop.utils.formatter.NumberFormatter;
 import com.zpedroo.playershop.utils.menu.Menus;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -27,16 +28,17 @@ public class PlayerShop extends JavaPlugin {
 
         if (!isMySQLEnabled(getConfig())) {
             getLogger().log(Level.SEVERE, "MySQL are disabled! You need to enable it.");
-            Bukkit.getPluginManager().disablePlugin(this);
+            getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
         new DBConnection(getConfig());
         new NumberFormatter(getConfig());
         new Menus();
-        new ProtocolLib();
-        new Vault();
-        new WorldGuard();
+        new VaultHook();
+        new WorldGuardHook();
+
+        ProtocolLibrary.getProtocolManager().addPacketListener(new ProtocolLibHook(this, PacketType.Play.Client.LOOK));
 
         registerCommands();
         registerListeners();

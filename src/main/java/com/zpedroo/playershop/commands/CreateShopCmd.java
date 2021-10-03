@@ -1,8 +1,8 @@
 package com.zpedroo.playershop.commands;
 
-import com.zpedroo.playershop.hooks.WorldGuard;
+import com.zpedroo.playershop.hooks.WorldGuardHook;
 import com.zpedroo.playershop.managers.ShopManager;
-import com.zpedroo.playershop.shop.Shop;
+import com.zpedroo.playershop.objects.Shop;
 import com.zpedroo.playershop.objects.ShopCreator;
 import com.zpedroo.playershop.utils.config.Messages;
 import com.zpedroo.playershop.utils.menu.Menus;
@@ -44,12 +44,12 @@ public class CreateShopCmd implements CommandExecutor {
             return true;
         }
 
-        if (!WorldGuard.getInstance().canBuild(player, block.getLocation())) {
+        if (!WorldGuardHook.getInstance().canBuild(player, block.getLocation())) {
             player.sendMessage(Messages.WITHOUT_PERMISSION);
             return true;
         }
 
-        ShopCreator creator = new ShopCreator(block.getLocation(), player.getUniqueId(), item, BigInteger.ZERO, BigInteger.ZERO, item.getAmount(), null);
+        ShopCreator creator = new ShopCreator(block.getLocation(), player.getUniqueId(), item, null, BigInteger.ZERO, BigInteger.ZERO, item.getAmount(), null);
         Menus.getInstance().openCreatorMenu(player, creator);
         return false;
     }

@@ -7,31 +7,39 @@ MySQL:
   port: 3306
 
 Settings:
+  type-translations:
+    BUY: Comprar
+    SELL: Vender
+    BOTH: Ambos
+
   buy-hologram:
     - '&6&lLOJA'
     - ''
     - '&7Vendedor: &f{player}'
-    - '&7Valor de compra: &e{buy_price}'
+    - '&7Valor de compra: {buy_price}'
     - ''
     - '&7Item: &f{item}'
     - '&7Quantia: &f{amount}'
+
   sell-hologram:
     - '&6&lLOJA'
     - ''
     - '&7Vendedor: &f{player}'
-    - '&7Valor de venda: &e{sell_price}'
+    - '&7Valor de venda: {sell_price}'
     - ''
     - '&7Item: &f{item}'
     - '&7Quantia: &f{amount}'
+
   both-hologram:
     - '&6&lLOJA'
     - ''
     - '&7Vendedor: &f{player}'
-    - '&7Valor de compra: &e{buy_price}'
-    - '&7Valor de venda: &e{sell_price}'
+    - '&7Valor de compra: {buy_price}'
+    - '&7Valor de venda: {sell_price}'
     - ''
     - '&7Item: &f{item}'
     - '&7Quantia: &f{amount}'
+
   chest-inventory-name: 'Loja - Baú'
 
 Messages:
@@ -39,12 +47,12 @@ Messages:
   sell-successful: '&6&lVoltz&f&lMC &8&l➜ &aVenda efetuada com sucesso!'
   invalid-price: '&6&lVoltz&f&lMC &8&l➜ &cO valor ainda não foi definido!'
   need-space-player: '&6&lVoltz&f&lMC &8&l➜ &cVocê não possui espaço suficiente no seu inventário!'
-  need-space-shop: '&6&lVoltz&f&lMC &8&l➜ &cA loja não possui espaço suficiente!'
+  need-space-shop: '&6&lVoltz&f&lMC &8&l➜ &cO baú dessa loja não possui espaço suficiente!'
   without-permission: '&6&lVoltz&f&lMC &8&l➜ &cVocê não pode criar uma loja nesse local!'
   insufficient-items-player: '&6&lVoltz&f&lMC &8&l➜ &cVocê não possui itens suficientes!'
   insufficient-items-shop: '&6&lVoltz&f&lMC &8&l➜ &cA loja não possui itens suficientes!'
-  insufficient-money-player: '&6&lVoltz&f&lMC &8&l➜ &cVocê não possui coins suficientes!'
-  insufficient-money-owner: '&6&lVoltz&f&lMC &8&l➜ &cO dono dessa loja não possui coins suficientes!'
+  insufficient-currency-player: '&6&lVoltz&f&lMC &8&l➜ &cVocê não consegue pagar toda essa quantia de itens! ({has}/{need})'
+  insufficient-currency-owner: '&6&lVoltz&f&lMC &8&l➜ &cO dono dessa loja não consegue pagar por todos esses itens! ({has}/{need})'
   need-look: '&6&lVoltz&f&lMC &8&l➜ &cVocê precisa estar olhando para um bloco!'
   need-item: '&6&lVoltz&f&lMC &8&l➜ &cVocê precisa estar segurando um item!'
   has-shop: '&6&lVoltz&f&lMC &8&l➜ &cJá existe uma loja nesse local!'
@@ -59,7 +67,7 @@ Messages:
   edit-amount:
     - '&6&lVoltz&f&lMC &8&l➜ &7Digite no chat a quantia que deseja!'
 
-NumberFormatter:
+Number-Formatter:
   - "k"
   - "M"
   - "B"

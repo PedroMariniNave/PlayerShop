@@ -22,7 +22,7 @@ public class DBConnection {
         this.hikari = new HikariDataSource();
 
         enable(file);
-        getDBManager().setupTable();
+        getDBManager().createTable();
     }
 
     private void enable(FileConfiguration file) {

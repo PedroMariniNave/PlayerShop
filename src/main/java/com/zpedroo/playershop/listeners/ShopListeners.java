@@ -3,7 +3,7 @@ package com.zpedroo.playershop.listeners;
 import com.zpedroo.playershop.enums.ShopAction;
 import com.zpedroo.playershop.enums.ShopType;
 import com.zpedroo.playershop.managers.ShopManager;
-import com.zpedroo.playershop.shop.Shop;
+import com.zpedroo.playershop.objects.Shop;
 import com.zpedroo.playershop.utils.menu.Menus;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.block.Block;
@@ -24,13 +24,11 @@ public class ShopListeners implements Listener {
         if (!(event.getAction() == Action.RIGHT_CLICK_BLOCK)) return;
 
         Shop shop = ShopManager.getInstance().getShop(event.getClickedBlock().getLocation());
-
         if (shop == null) return;
 
         event.setCancelled(true);
 
         Player player = event.getPlayer();
-
         if (player.getUniqueId().equals(shop.getOwnerUUID())) {
             Menus.getInstance().openEditMenu(player, shop);
             return;
@@ -39,8 +37,8 @@ public class ShopListeners implements Listener {
         ShopType type = shop.getType();
 
         switch (type) {
-            case BUY -> Menus.getInstance().openShopMenu(player, shop, shop.getAmount(), ShopAction.BUY);
-            case SELL -> Menus.getInstance().openShopMenu(player, shop, shop.getAmount(), ShopAction.SELL);
+            case BUY -> Menus.getInstance().openShopMenu(player, shop, shop.getDefaultAmount(), ShopAction.BUY);
+            case SELL -> Menus.getInstance().openShopMenu(player, shop, shop.getDefaultAmount(), ShopAction.SELL);
             case BOTH -> Menus.getInstance().openChooseMenu(player, shop);
         }
     }
@@ -50,11 +48,9 @@ public class ShopListeners implements Listener {
         Block block = event.getBlock();
 
         Shop shop = ShopManager.getInstance().getShop(block.getLocation());
-
         if (shop == null) return;
 
         Player player = event.getPlayer();
-
         if (!player.getUniqueId().equals(shop.getOwnerUUID())) {
             event.setCancelled(true);
             return;
