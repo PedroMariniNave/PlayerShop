@@ -21,9 +21,9 @@ import java.util.UUID;
 
 public class Shop {
 
-    private Location location;
-    private UUID ownerUUID;
-    private ItemStack item;
+    private final Location location;
+    private final UUID ownerUUID;
+    private final ItemStack item;
     private Currency currency;
     private BigInteger buyPrice;
     private BigInteger sellPrice;
@@ -31,8 +31,8 @@ public class Shop {
     private ShopType type;
     private Inventory chestInventory;
     private Material display;
-    private ShopHologram hologram;
-    private ShopStand armorStand;
+    private final ShopHologram hologram;
+    private final ShopStand armorStand;
     private Boolean update;
 
     public Shop(Location location, UUID ownerUUID, ItemStack item, Currency currency, BigInteger buyPrice, BigInteger sellPrice, Integer defaultAmount, ShopType type, Inventory chestInventory, Material display) {
@@ -135,54 +135,52 @@ public class Shop {
     public void setCurrency(Currency currency) {
         this.currency = currency;
         this.update = true;
-        this.hologram.update();
+        this.hologram.updateHologramAndItem();
     }
 
     public void setBuyPrice(BigInteger price) {
         this.buyPrice = price;
         this.update = true;
-        this.hologram.update();
+        this.hologram.updateHologramAndItem();
     }
 
     public void setSellPrice(BigInteger price) {
         this.sellPrice = price;
         this.update = true;
-        this.hologram.update();
+        this.hologram.updateHologramAndItem();
     }
 
     public void setDefaultAmount(Integer amount) {
         this.defaultAmount = amount;
         this.update = true;
-        this.hologram.update();
+        this.hologram.updateHologramAndItem();
     }
 
     public void setType(ShopType type) {
         this.type = type;
         this.update = true;
         this.hologram.updateLines();
-        this.hologram.update();
+        this.hologram.updateHologramAndItem();
     }
 
     public void delete() {
         ShopManager.getInstance().getCache().getDeletedShops().add(location);
         ShopManager.getInstance().getCache().getShops().remove(location);
 
-        hologram.destroy();
-        armorStand.destroy();
+        hologram.removeHologramAndItem();
+        armorStand.remove();
+
+        for (ItemStack item : chestInventory.getContents()) {
+            if (item == null || item.getType().equals(Material.AIR)) continue;
+
+            location.getWorld().dropItemNaturally(location, item);
+        }
     }
 
     public void buy(Player player, int amount) {
         if (amount <= 0) amount = defaultAmount;
 
-        int needSlots;
-
-        if (item.getType().getMaxStackSize() == 1) {
-            needSlots = defaultAmount;
-        } else {
-            needSlots = defaultAmount >= 64 ? defaultAmount / item.getMaxStackSize() : 1;
-        }
-
-        if (!InventoryManager.hasSpace(player.getInventory(), needSlots)) {
+        if (InventoryManager.getFreeSpace(player.getInventory(), item) < amount) {
             player.sendMessage(Messages.NEED_SPACE_PLAYER);
             player.closeInventory();
             return;
@@ -245,15 +243,7 @@ public class Shop {
             return;
         }
 
-        int needSlots;
-
-        if (item.getType().getMaxStackSize() == 1) {
-            needSlots = amount;
-        } else {
-            needSlots = amount >= 64 ? amount / item.getType().getMaxStackSize() : 1;
-        }
-
-        if (!InventoryManager.hasSpace(chestInventory, needSlots)) {
+        if (InventoryManager.getFreeSpace(chestInventory, item) < amount) {
             player.sendMessage(Messages.NEED_SPACE_SHOP);
             player.closeInventory();
             return;

@@ -2,18 +2,18 @@ package com.zpedroo.playershop.utils.menu;
 
 import com.zpedroo.multieconomy.api.CurrencyAPI;
 import com.zpedroo.multieconomy.objects.Currency;
-import com.zpedroo.playershop.FileUtils;
 import com.zpedroo.playershop.enums.ShopAction;
 import com.zpedroo.playershop.enums.ShopType;
 import com.zpedroo.playershop.listeners.PlayerChatListener;
 import com.zpedroo.playershop.objects.Shop;
 import com.zpedroo.playershop.objects.ShopCreator;
+import com.zpedroo.playershop.utils.FileUtils;
+import com.zpedroo.playershop.utils.builder.InventoryBuilder;
 import com.zpedroo.playershop.utils.builder.InventoryUtils;
 import com.zpedroo.playershop.utils.builder.ItemBuilder;
 import com.zpedroo.playershop.utils.config.Messages;
 import com.zpedroo.playershop.utils.formatter.NumberFormatter;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -22,16 +22,13 @@ import org.bukkit.inventory.ItemStack;
 
 import java.math.BigInteger;
 
-public class Menus {
+public class Menus extends InventoryUtils {
 
     private static Menus instance;
     public static Menus getInstance() { return instance; }
 
-    private InventoryUtils inventoryUtils;
-
     public Menus() {
         instance = this;
-        this.inventoryUtils = new InventoryUtils();
     }
 
     public void openDisplayMenu(Player player, Shop shop) {
@@ -40,21 +37,19 @@ public class Menus {
         String title = ChatColor.translateAlternateColorCodes('&', FileUtils.get().getString(file, "Inventory.title"));
         int size = FileUtils.get().getInt(file, "Inventory.size");
 
-        Inventory inventory = Bukkit.createInventory(null, size, title);
+        InventoryBuilder inventory = new InventoryBuilder(title, size);
 
         for (String str : FileUtils.get().getSection(file, "Inventory.items")) {
             ItemStack item = ItemBuilder.build(FileUtils.get().getFile(file).get(), "Inventory.items." + str).build();
             int slot = FileUtils.get().getInt(file, "Inventory.items." + str + ".slot");
 
-            inventoryUtils.addAction(inventory, item, () -> {
+            inventory.addItem(item, slot, () -> {
                 shop.setDisplay(item.getType());
-                player.closeInventory();
-            }, InventoryUtils.ActionType.ALL_CLICKS);
-
-            inventory.setItem(slot, item);
+                inventory.close(player);
+            }, ActionType.ALL_CLICKS);
         }
 
-        player.openInventory(inventory);
+        inventory.open(player);
     }
 
     public void openChooseMenu(Player player, Shop shop) {
@@ -63,7 +58,7 @@ public class Menus {
         String title = ChatColor.translateAlternateColorCodes('&', FileUtils.get().getString(file, "Inventory.title"));
         int size = FileUtils.get().getInt(file, "Inventory.size");
 
-        Inventory inventory = Bukkit.createInventory(null, size, title);
+        InventoryBuilder inventory = new InventoryBuilder(title, size);
 
         for (String str : FileUtils.get().getSection(file, "Inventory.items")) {
             ItemStack item = ItemBuilder.build(FileUtils.get().getFile(file).get(), "Inventory.items." + str).build();
@@ -71,17 +66,19 @@ public class Menus {
 
             String action = FileUtils.get().getString(file, "Inventory.items." + str + ".action");
 
-            if (!StringUtils.equals(action, "NULL")) {
-                switch (action) {
-                    case "SELECT_BUY" -> inventoryUtils.addAction(inventory, item, () -> openShopMenu(player, shop, shop.getDefaultAmount(), ShopAction.BUY), InventoryUtils.ActionType.ALL_CLICKS);
-                    case "SELECT_SELL" -> inventoryUtils.addAction(inventory, item, () -> openShopMenu(player, shop, shop.getDefaultAmount(), ShopAction.SELL), InventoryUtils.ActionType.ALL_CLICKS);
+            inventory.addItem(item, slot, () -> {
+                switch (action.toUpperCase()) {
+                    case "SELECT_BUY":
+                        openShopMenu(player, shop, shop.getDefaultAmount(), ShopAction.BUY);
+                        break;
+                    case "SELECT_SELL":
+                        openShopMenu(player, shop, shop.getDefaultAmount(), ShopAction.SELL);
+                        break;
                 }
-            }
-
-            inventory.setItem(slot, item);
+            }, ActionType.ALL_CLICKS);
         }
 
-        player.openInventory(inventory);
+        inventory.open(player);
     }
 
     public void openShopMenu(Player player, Shop shop, Integer amount, ShopAction shopAction) {
@@ -90,35 +87,36 @@ public class Menus {
         String title = ChatColor.translateAlternateColorCodes('&', FileUtils.get().getString(file, "Inventory.title"));
         int size = FileUtils.get().getInt(file, "Inventory.size");
 
-        Inventory inventory = Bukkit.createInventory(null, size, title);
+        InventoryBuilder inventory = new InventoryBuilder(title, size);
 
         for (String str : FileUtils.get().getSection(file, "Inventory.items")) {
-            ItemStack item = null;
             int slot = FileUtils.get().getInt(file, "Inventory.items." + str + ".slot");
 
             if (StringUtils.equals(str, "shop-item")) {
-                item = shop.getItem().clone();
-
+                ItemStack item = shop.getItem().clone();
                 if (item.getType().equals(Material.AIR)) return;
 
                 item.setAmount(1);
 
-                inventory.setItem(slot, item);
+                inventory.addItem(item, slot);
                 continue;
             }
 
             BigInteger price = null;
 
             switch (shopAction) {
-                case BUY -> price = shop.getBuyPrice();
-                case SELL -> price = shop.getSellPrice();
+                case BUY:
+                    price = shop.getBuyPrice();
+                    break;
+                case SELL:
+                    price = shop.getSellPrice();
+                    break;
             }
 
             BigInteger finalPrice = price.multiply(BigInteger.valueOf(amount));
-
-            item = ItemBuilder.build(FileUtils.get().getFile(file).get(), "Inventory.items." + str, new String[]{
+            ItemStack item = ItemBuilder.build(FileUtils.get().getFile(file).get(), "Inventory.items." + str, new String[]{
                     "{amount}",
-                    "{price}"
+                    "{final_price}"
             }, new String[]{
                     NumberFormatter.getInstance().formatDecimal(amount.doubleValue()),
                     StringUtils.replaceEach(shop.getCurrency().getAmountDisplay(), new String[]{ "{amount}" }, new String[]{ NumberFormatter.getInstance().format(finalPrice) }),
@@ -126,16 +124,19 @@ public class Menus {
 
             String action = FileUtils.get().getString(file, "Inventory.items." + str + ".action");
 
-            if (!StringUtils.equals(action, "NULL")) {
-                switch (action) {
-                    case "CONFIRM" -> inventoryUtils.addAction(inventory, item, () -> {
+            inventory.addItem(item, slot, () -> {
+                switch (action.toUpperCase()) {
+                    case "CONFIRM":
                         switch (shopAction) {
-                            case BUY -> shop.buy(player, amount);
-                            case SELL -> shop.sell(player, amount);
+                            case BUY:
+                                shop.buy(player, amount);
+                                break;
+                            case SELL:
+                                shop.sell(player, amount);
+                                break;
                         }
-                    }, InventoryUtils.ActionType.ALL_CLICKS);
-
-                    case "SELECT_AMOUNT" -> inventoryUtils.addAction(inventory, item, () -> {
+                        break;
+                    case "SELECT_AMOUNT":
                         for (int i = 0; i < 25; ++i) {
                             player.sendMessage("");
                         }
@@ -147,17 +148,16 @@ public class Menus {
                         }
 
                         PlayerChatListener.getPlayerChat().put(player, new PlayerChatListener.PlayerChat(PlayerChatListener.PlayerChat.PlayerChatAction.SELECT_AMOUNT, shop, shopAction));
-                        player.closeInventory();
-                    }, InventoryUtils.ActionType.ALL_CLICKS);
-
-                    case "CANCEL" -> inventoryUtils.addAction(inventory, item, player::closeInventory, InventoryUtils.ActionType.ALL_CLICKS);
+                        inventory.close(player);
+                        break;
+                    case "CANCEL":
+                        inventory.close(player);
+                        break;
                 }
-            }
-
-            inventory.setItem(slot, item);
+            }, ActionType.ALL_CLICKS);
         }
 
-        player.openInventory(inventory);
+        inventory.open(player);
     }
 
     public void openEditMenu(Player player, Shop shop) {
@@ -166,24 +166,22 @@ public class Menus {
         String title = ChatColor.translateAlternateColorCodes('&', FileUtils.get().getString(file, "Inventory.title"));
         int size = FileUtils.get().getInt(file, "Inventory.size");
 
-        Inventory inventory = Bukkit.createInventory(null, size, title);
+        InventoryBuilder inventory = new InventoryBuilder(title, size);
 
         for (String str : FileUtils.get().getSection(file, "Inventory.items")) {
-            ItemStack item = null;
             int slot = FileUtils.get().getInt(file, "Inventory.items." + str + ".slot");
 
             if (StringUtils.equals(str, "shop-item")) {
-                item = shop.getItem().clone();
-
+                ItemStack item = shop.getItem().clone();
                 if (item.getType().equals(Material.AIR)) return;
 
                 item.setAmount(1);
 
-                inventory.setItem(slot, item);
+                inventory.addItem(item, slot);
                 continue;
             }
 
-            item = ItemBuilder.build(FileUtils.get().getFile(file).get(), "Inventory.items." + str, new String[]{
+            ItemStack item = ItemBuilder.build(FileUtils.get().getFile(file).get(), "Inventory.items." + str, new String[]{
                     "{amount}",
                     "{buy_price}",
                     "{sell_price}",
@@ -198,12 +196,18 @@ public class Menus {
             }).build();
             String action = FileUtils.get().getString(file, "Inventory.items." + str + ".action");
 
-            if (!StringUtils.equals(action, "NULL")) {
-                switch (action) {
-                    case "EDIT_DISPLAY" -> inventoryUtils.addAction(inventory, item, () -> openDisplayMenu(player, shop), InventoryUtils.ActionType.ALL_CLICKS);
-                    case "EDIT_TYPE" -> inventoryUtils.addAction(inventory, item, () -> openEditTypeMenu(player, shop), InventoryUtils.ActionType.ALL_CLICKS);
-                    case "EDIT_CURRENCY" -> inventoryUtils.addAction(inventory, item, () -> openEditCurrencyMenu(player, shop), InventoryUtils.ActionType.ALL_CLICKS);
-                    case "EDIT_AMOUNT" -> inventoryUtils.addAction(inventory, item, () -> {
+            inventory.addItem(item, slot, () -> {
+                switch (action.toUpperCase()) {
+                    case "EDIT_DISPLAY":
+                        openDisplayMenu(player, shop);
+                        break;
+                    case "EDIT_TYPE":
+                        openEditTypeMenu(player, shop);
+                        break;
+                    case "EDIT_CURRENCY":
+                        openEditCurrencyMenu(player, shop);
+                        break;
+                    case "EDIT_AMOUNT":
                         for (int i = 0; i < 25; ++i) {
                             player.sendMessage("");
                         }
@@ -215,10 +219,9 @@ public class Menus {
                         }
 
                         PlayerChatListener.getPlayerChat().put(player, new PlayerChatListener.PlayerChat(PlayerChatListener.PlayerChat.PlayerChatAction.EDIT_AMOUNT, shop));
-                        player.closeInventory();
-                    },InventoryUtils.ActionType.ALL_CLICKS);
-
-                    case "BUY_PRICE" -> inventoryUtils.addAction(inventory, item, () -> {
+                        inventory.close(player);
+                        break;
+                    case "BUY_PRICE":
                         for (int i = 0; i < 25; ++i) {
                             player.sendMessage("");
                         }
@@ -230,10 +233,9 @@ public class Menus {
                         }
 
                         PlayerChatListener.getPlayerChat().put(player, new PlayerChatListener.PlayerChat(PlayerChatListener.PlayerChat.PlayerChatAction.EDIT_BUY_PRICE, shop));
-                        player.closeInventory();
-                    }, InventoryUtils.ActionType.ALL_CLICKS);
-
-                    case "SELL_PRICE" -> inventoryUtils.addAction(inventory, item, () -> {
+                        inventory.close(player);
+                        break;
+                    case "SELL_PRICE":
                         for (int i = 0; i < 25; ++i) {
                             player.sendMessage("");
                         }
@@ -245,26 +247,22 @@ public class Menus {
                         }
 
                         PlayerChatListener.getPlayerChat().put(player, new PlayerChatListener.PlayerChat(PlayerChatListener.PlayerChat.PlayerChatAction.EDIT_SELL_PRICE, shop));
-                        player.closeInventory();
-                    }, InventoryUtils.ActionType.ALL_CLICKS);
-
-                    case "OPEN_CHEST" -> inventoryUtils.addAction(inventory, item, () -> {
-                        Inventory chest = shop.getChestInventory();
-                        player.openInventory(chest);
-                        inventoryUtils.getCloseInventories().put(chest, shop);
-                    }, InventoryUtils.ActionType.ALL_CLICKS);
-
-                    case "DELETE" -> inventoryUtils.addAction(inventory, item, () -> {
-                        player.closeInventory();
+                        inventory.close(player);
+                        break;
+                    case "OPEN_CHEST":
+                        Inventory chestInventory = shop.getChestInventory();
+                        player.openInventory(chestInventory);
+                        getCloseInventories().put(chestInventory, shop);
+                        break;
+                    case "DELETE":
+                        inventory.close(player);
                         shop.delete();
-                    }, InventoryUtils.ActionType.ALL_CLICKS);
+                        break;
                 }
-            }
-
-            inventory.setItem(slot, item);
+            }, ActionType.ALL_CLICKS);
         }
 
-        player.openInventory(inventory);
+        inventory.open(player);
     }
 
     public void openEditTypeMenu(Player player, Shop shop) {
@@ -273,7 +271,7 @@ public class Menus {
         String title = ChatColor.translateAlternateColorCodes('&', FileUtils.get().getString(file, "Inventory.title"));
         int size = FileUtils.get().getInt(file, "Inventory.size");
 
-        Inventory inventory = Bukkit.createInventory(null, size, title);
+        InventoryBuilder inventory = new InventoryBuilder(title, size);
 
         for (String str : FileUtils.get().getSection(file, "Inventory.items")) {
             ItemStack item = ItemBuilder.build(FileUtils.get().getFile(file).get(), "Inventory.items." + str).build();
@@ -281,29 +279,25 @@ public class Menus {
 
             String action = FileUtils.get().getString(file, "Inventory.items." + str + ".action");
 
-            if (!StringUtils.equals(action, "NULL")) {
-                switch (action) {
-                    case "SELECT_BUY" -> inventoryUtils.addAction(inventory, item, () -> {
+            inventory.addItem(item, slot, () -> {
+                switch (action.toUpperCase()) {
+                    case "SELECT_BUY":
                         shop.setType(ShopType.BUY);
                         openEditMenu(player, shop);
-                    }, InventoryUtils.ActionType.ALL_CLICKS);
-
-                    case "SELECT_SELL" -> inventoryUtils.addAction(inventory, item, () -> {
+                        break;
+                    case "SELECT_SELL":
                         shop.setType(ShopType.SELL);
                         openEditMenu(player, shop);
-                    }, InventoryUtils.ActionType.ALL_CLICKS);
-
-                    case "SELECT_BOTH" -> inventoryUtils.addAction(inventory, item, () -> {
+                        break;
+                    case "SELECT_BOTH":
                         shop.setType(ShopType.BOTH);
                         openEditMenu(player, shop);
-                    }, InventoryUtils.ActionType.ALL_CLICKS);
+                        break;
                 }
-            }
-
-            inventory.setItem(slot, item);
+            }, ActionType.ALL_CLICKS);
         }
 
-        player.openInventory(inventory);
+        inventory.open(player);
     }
 
     public void openEditCurrencyMenu(Player player, Shop shop) {
@@ -312,25 +306,23 @@ public class Menus {
         String title = ChatColor.translateAlternateColorCodes('&', FileUtils.get().getString(file, "Inventory.title"));
         int size = FileUtils.get().getInt(file, "Inventory.size");
 
-        Inventory inventory = Bukkit.createInventory(null, size, title);
+        InventoryBuilder inventory = new InventoryBuilder(title, size);
 
         for (String str : FileUtils.get().getSection(file, "Inventory.items")) {
             ItemStack item = ItemBuilder.build(FileUtils.get().getFile(file).get(), "Inventory.items." + str).build();
             int slot = FileUtils.get().getInt(file, "Inventory.items." + str + ".slot");
 
-            String currecyName = FileUtils.get().getString(file, "Inventory.items." + str + ".currency");
-            Currency currency = CurrencyAPI.getCurrency(currecyName);
-            if (currency != null) {
-                inventoryUtils.addAction(inventory, item, () -> {
-                    shop.setCurrency(currency);
-                    openEditMenu(player, shop);
-                }, InventoryUtils.ActionType.ALL_CLICKS);
-            }
+            String currencyName = FileUtils.get().getString(file, "Inventory.items." + str + ".currency");
+            Currency currency = CurrencyAPI.getCurrency(currencyName);
+            inventory.addItem(item, slot, () -> {
+                if (currency == null) return;
 
-            inventory.setItem(slot, item);
+                shop.setCurrency(currency);
+                openEditMenu(player, shop);
+            }, ActionType.ALL_CLICKS);
         }
 
-        player.openInventory(inventory);
+        inventory.open(player);
     }
 
     public void openSelectCurrencyMenu(Player player, ShopCreator creator) {
@@ -339,62 +331,58 @@ public class Menus {
         String title = ChatColor.translateAlternateColorCodes('&', FileUtils.get().getString(file, "Inventory.title"));
         int size = FileUtils.get().getInt(file, "Inventory.size");
 
-        Inventory inventory = Bukkit.createInventory(null, size, title);
+        InventoryBuilder inventory = new InventoryBuilder(title, size);
 
         for (String str : FileUtils.get().getSection(file, "Inventory.items")) {
             ItemStack item = ItemBuilder.build(FileUtils.get().getFile(file).get(), "Inventory.items." + str).build();
             int slot = FileUtils.get().getInt(file, "Inventory.items." + str + ".slot");
 
-            String currecyName = FileUtils.get().getString(file, "Inventory.items." + str + ".currency");
-            Currency currency = CurrencyAPI.getCurrency(currecyName);
-            if (currency != null) {
-                inventoryUtils.addAction(inventory, item, () -> {
-                    creator.setCurrency(currency);
+            String currencyName = FileUtils.get().getString(file, "Inventory.items." + str + ".currency");
+            Currency currency = CurrencyAPI.getCurrency(currencyName);
+            inventory.addItem(item, slot, () -> {
+                if (currency == null) return;
 
-                    for (int i = 0; i < 25; ++i) {
-                        player.sendMessage("");
-                    }
+                creator.setCurrency(currency);
 
-                    player.closeInventory();
+                for (int i = 0; i < 25; ++i) {
+                    player.sendMessage("");
+                }
 
-                    switch (creator.getType()) {
-                        case BUY -> {
-                            for (String msg : Messages.BUY_PRICE) {
-                                if (msg == null) break;
+                inventory.close(player);
 
-                                player.sendMessage(msg);
-                            }
+                switch (creator.getType()) {
+                    case BUY:
+                        for (String msg : Messages.BUY_PRICE) {
+                            if (msg == null) break;
 
-                            PlayerChatListener.getPlayerChat().put(player, new PlayerChatListener.PlayerChat(PlayerChatListener.PlayerChat.PlayerChatAction.EDIT_BUY_PRICE, null, creator));
+                            player.sendMessage(msg);
                         }
 
-                        case SELL -> {
-                            for (String msg : Messages.SELL_PRICE) {
-                                if (msg == null) break;
+                        PlayerChatListener.getPlayerChat().put(player, new PlayerChatListener.PlayerChat(PlayerChatListener.PlayerChat.PlayerChatAction.EDIT_BUY_PRICE, null, creator));
+                        break;
+                    case SELL:
+                        for (String msg : Messages.SELL_PRICE) {
+                            if (msg == null) break;
 
-                                player.sendMessage(msg);
-                            }
-
-                            PlayerChatListener.getPlayerChat().put(player, new PlayerChatListener.PlayerChat(PlayerChatListener.PlayerChat.PlayerChatAction.EDIT_BUY_PRICE, null, creator));
+                            player.sendMessage(msg);
                         }
 
-                        case BOTH -> {
-                            for (String msg : Messages.BUY_PRICE) {
-                                if (msg == null) break;
+                        PlayerChatListener.getPlayerChat().put(player, new PlayerChatListener.PlayerChat(PlayerChatListener.PlayerChat.PlayerChatAction.EDIT_BUY_PRICE, null, creator));
+                        break;
+                    case BOTH:
+                        for (String msg : Messages.BUY_PRICE) {
+                            if (msg == null) break;
 
-                                player.sendMessage(msg);
-                            }
-
-                            PlayerChatListener.getPlayerChat().put(player, new PlayerChatListener.PlayerChat(PlayerChatListener.PlayerChat.PlayerChatAction.EDIT_BUY_PRICE, PlayerChatListener.PlayerChat.PlayerChatAction.EDIT_SELL_PRICE, creator));
+                            player.sendMessage(msg);
                         }
-                    }
-                }, InventoryUtils.ActionType.ALL_CLICKS);
-            }
 
-            inventory.setItem(slot, item);
+                        PlayerChatListener.getPlayerChat().put(player, new PlayerChatListener.PlayerChat(PlayerChatListener.PlayerChat.PlayerChatAction.EDIT_BUY_PRICE, PlayerChatListener.PlayerChat.PlayerChatAction.EDIT_SELL_PRICE, creator));
+                        break;
+                }
+            }, ActionType.ALL_CLICKS);
         }
 
-        player.openInventory(inventory);
+        inventory.open(player);
     }
 
     public void openCreatorMenu(Player player, ShopCreator creator) {
@@ -403,7 +391,7 @@ public class Menus {
         String title = ChatColor.translateAlternateColorCodes('&', FileUtils.get().getString(file, "Inventory.title"));
         int size = FileUtils.get().getInt(file, "Inventory.size");
 
-        Inventory inventory = Bukkit.createInventory(null, size, title);
+        InventoryBuilder inventory = new InventoryBuilder(title, size);
 
         for (String str : FileUtils.get().getSection(file, "Inventory.items")) {
             ItemStack item = ItemBuilder.build(FileUtils.get().getFile(file).get(), "Inventory.items." + str).build();
@@ -411,28 +399,24 @@ public class Menus {
 
             String action = FileUtils.get().getString(file, "Inventory.items." + str + ".action");
 
-            if (!StringUtils.equals(action, "NULL")) {
-                switch (action) {
-                    case "SELECT_BUY" -> inventoryUtils.addAction(inventory, item, () -> {
+            inventory.addItem(item, slot, () -> {
+                switch (action.toUpperCase()) {
+                    case "SELECT_BUY":
                         creator.setType(ShopType.BUY);
                         openSelectCurrencyMenu(player, creator);
-                    }, InventoryUtils.ActionType.ALL_CLICKS);
-
-                    case "SELECT_SELL" -> inventoryUtils.addAction(inventory, item, () -> {
+                        break;
+                    case "SELECT_SELL":
                         creator.setType(ShopType.SELL);
                         openSelectCurrencyMenu(player, creator);
-                    }, InventoryUtils.ActionType.ALL_CLICKS);
-
-                    case "SELECT_BOTH" -> inventoryUtils.addAction(inventory, item, () -> {
+                        break;
+                    case "SELECT_BOTH":
                         creator.setType(ShopType.BOTH);
                         openSelectCurrencyMenu(player, creator);
-                    }, InventoryUtils.ActionType.ALL_CLICKS);
+                        break;
                 }
-            }
-
-            inventory.setItem(slot, item);
+            }, ActionType.ALL_CLICKS);
         }
 
-        player.openInventory(inventory);
+        inventory.open(player);
     }
 }

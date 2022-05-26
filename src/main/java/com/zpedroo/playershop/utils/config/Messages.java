@@ -1,6 +1,6 @@
 package com.zpedroo.playershop.utils.config;
 
-import com.zpedroo.playershop.FileUtils;
+import com.zpedroo.playershop.utils.FileUtils;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;

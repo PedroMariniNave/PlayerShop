@@ -1,6 +1,7 @@
 package com.zpedroo.playershop.commands;
 
-import com.zpedroo.playershop.hooks.WorldGuardHook;
+import com.intellectualcrafters.plot.object.Location;
+import com.intellectualcrafters.plot.object.Plot;
 import com.zpedroo.playershop.managers.ShopManager;
 import com.zpedroo.playershop.objects.Shop;
 import com.zpedroo.playershop.objects.ShopCreator;
@@ -15,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.math.BigInteger;
+import java.util.HashSet;
 
 public class CreateShopCmd implements CommandExecutor {
 
@@ -23,7 +25,7 @@ public class CreateShopCmd implements CommandExecutor {
         if (!(sender instanceof Player)) return true;
 
         Player player = (Player) sender;
-        Block block = player.getTargetBlock(null, 5);
+        Block block = player.getTargetBlock((HashSet<Byte>) null, 5);
 
         if (block.getType().equals(Material.AIR)) {
             player.sendMessage(Messages.NEED_LOOK);
@@ -44,9 +46,18 @@ public class CreateShopCmd implements CommandExecutor {
             return true;
         }
 
-        if (!WorldGuardHook.getInstance().canBuild(player, block.getLocation())) {
-            player.sendMessage(Messages.WITHOUT_PERMISSION);
-            return true;
+        if (!player.hasPermission("playershop.admin")) {
+            Location location = new Location(
+                    block.getWorld().getName(),
+                    block.getX(),
+                    block.getY(),
+                    block.getZ()
+            );
+            Plot plot = Plot.getPlot(location);
+            if (plot == null || !plot.isAdded(player.getUniqueId())) {
+                player.sendMessage(Messages.WITHOUT_PERMISSION);
+                return true;
+            }
         }
 
         ShopCreator creator = new ShopCreator(block.getLocation(), player.getUniqueId(), item, null, BigInteger.ZERO, BigInteger.ZERO, item.getAmount(), null);

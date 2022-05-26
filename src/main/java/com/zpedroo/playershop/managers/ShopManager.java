@@ -3,7 +3,7 @@ package com.zpedroo.playershop.managers;
 import com.zpedroo.playershop.PlayerShop;
 import com.zpedroo.playershop.mysql.DBConnection;
 import com.zpedroo.playershop.objects.Shop;
-import com.zpedroo.playershop.utils.cache.DataCache;
+import com.zpedroo.playershop.managers.cache.DataCache;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -18,7 +18,7 @@ public class ShopManager {
     private static ShopManager instance;
     public static ShopManager getInstance() { return instance; }
 
-    private DataCache dataCache;
+    private final DataCache dataCache;
 
     public ShopManager() {
         instance = this;
@@ -51,11 +51,17 @@ public class ShopManager {
         dataCache.getDeletedShops().clear();
 
         new HashSet<>(dataCache.getShops().values()).forEach(shop -> {
-            if (shop == null) return;
-            if (!shop.isQueueUpdate()) return;
+            if (shop == null || !shop.isQueueUpdate()) return;
 
             DBConnection.getInstance().getDBManager().saveShop(shop);
             shop.setQueueUpdate(false);
+        });
+    }
+
+    public void clearAll() {
+        new HashSet<>(dataCache.getShops().values()).forEach(shop -> {
+            shop.getHologram().removeHologramAndItem();
+            shop.getArmorStand().remove();
         });
     }
 

@@ -16,14 +16,11 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.math.BigInteger;
 import java.util.HashMap;
+import java.util.Map;
 
 public class PlayerChatListener implements Listener {
 
-    private static final HashMap<Player, PlayerChat> playerChat;
-
-    static {
-        playerChat = new HashMap<>(32);
-    }
+    private static final Map<Player, PlayerChat> playerChat = new HashMap<>(4);
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onChat(AsyncPlayerChatEvent event) {
@@ -45,45 +42,41 @@ public class PlayerChatListener implements Listener {
             return;
         }
 
+        int limit = 36;
+
         switch (action) {
-            case EDIT_BUY_PRICE -> {
+            case EDIT_BUY_PRICE:
                 if (shop != null) {
                     shop.setBuyPrice(value);
                     PlayerShop.get().getServer().getScheduler().runTaskLater(PlayerShop.get(), () -> Menus.getInstance().openEditMenu(player, shop), 0L);
                     break;
                 }
-                creator.setBuyPrice(value);
-            }
 
-            case EDIT_SELL_PRICE -> {
+                creator.setBuyPrice(value);
+                break;
+            case EDIT_SELL_PRICE:
                 if (shop != null) {
                     shop.setSellPrice(value);
                     PlayerShop.get().getServer().getScheduler().runTaskLater(PlayerShop.get(), () -> Menus.getInstance().openEditMenu(player, shop), 0L);
                     break;
                 }
+
                 creator.setSellPrice(value);
-            }
-
-            case EDIT_AMOUNT -> {
-                int limit = 36;
-
+                break;
+            case EDIT_AMOUNT:
                 if (shop.getItem().getMaxStackSize() == 64) limit = 2304;
                 if (value.compareTo(BigInteger.valueOf(limit)) > 0) value = BigInteger.valueOf(limit);
 
                 shop.setDefaultAmount(value.intValue());
                 PlayerShop.get().getServer().getScheduler().runTaskLater(PlayerShop.get(), () -> Menus.getInstance().openEditMenu(player, shop), 0L);
-            }
-
-            case SELECT_AMOUNT -> {
-                int limit = 36;
-
+                break;
+            case SELECT_AMOUNT:
                 if (shop.getItem().getMaxStackSize() == 64) limit = 2304;
                 if (value.compareTo(BigInteger.valueOf(limit)) > 0) value = BigInteger.valueOf(limit);
 
-                shop.setDefaultAmount(value.intValue());
                 final BigInteger finalValue = value;
                 PlayerShop.get().getServer().getScheduler().runTaskLater(PlayerShop.get(), () -> Menus.getInstance().openShopMenu(player, shop, finalValue.intValue(), shopAction), 0L);
-            }
+                break;
         }
 
         if (creator == null) return;
@@ -96,7 +89,7 @@ public class PlayerChatListener implements Listener {
         }
 
         switch (next) {
-            case EDIT_SELL_PRICE -> {
+            case EDIT_SELL_PRICE:
                 for (int i = 0; i < 25; ++i) {
                     player.sendMessage("");
                 }
@@ -107,18 +100,17 @@ public class PlayerChatListener implements Listener {
                 }
 
                 getPlayerChat().put(player, new PlayerChat(next, null, creator));
-            }
+                break;
         }
     }
 
-    public static HashMap<Player, PlayerChat> getPlayerChat() {
+    public static Map<Player, PlayerChat> getPlayerChat() {
         return playerChat;
     }
 
-
     public static class PlayerChat {
 
-        private PlayerChatAction action;
+        private final PlayerChatAction action;
         private PlayerChatAction next;
         private ShopAction shopAction;
         private ShopCreator creator;

@@ -3,6 +3,7 @@ package com.zpedroo.playershop.hooks;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
+import com.zpedroo.playershop.PlayerShop;
 import com.zpedroo.playershop.managers.ShopManager;
 import com.zpedroo.playershop.objects.Shop;
 import com.zpedroo.playershop.objects.ShopHologram;
@@ -15,7 +16,7 @@ import java.util.*;
 
 public class ProtocolLibHook extends PacketAdapter {
 
-    private Map<Player, List<ShopHologram>> holograms = new HashMap<>(64);
+    private final Map<Player, List<ShopHologram>> holograms = new HashMap<>(8);
 
     public ProtocolLibHook(Plugin plugin, PacketType packetType) {
         super(plugin, packetType);
@@ -23,7 +24,7 @@ public class ProtocolLibHook extends PacketAdapter {
 
     public void onPacketReceiving(PacketEvent event) {
         Player player = event.getPlayer();
-        Block block = player.getTargetBlock(null, 15);
+        Block block = player.getTargetBlock((HashSet<Byte>) null, 15);
 
         Location location = block.getLocation();
 
@@ -35,14 +36,16 @@ public class ProtocolLibHook extends PacketAdapter {
             List<ShopHologram> holoList = holograms.remove(player);
 
             for (ShopHologram hologram : holoList) {
-                hologram.hideTo(player);
+                PlayerShop.get().getServer().getScheduler().runTaskLater(PlayerShop.get(),
+                        () -> hologram.hideHologramTo(player), 0L);
             }
             return;
         }
 
         ShopHologram hologram = shop.getHologram();
 
-        hologram.showTo(player);
+        PlayerShop.get().getServer().getScheduler().runTaskLater(PlayerShop.get(),
+                () -> hologram.showHologramTo(player), 0L);
 
         List<ShopHologram> holoList = holograms.containsKey(player) ? holograms.get(player) : new ArrayList<>();
         holoList.add(hologram);

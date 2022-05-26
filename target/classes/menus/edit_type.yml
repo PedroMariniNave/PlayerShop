@@ -4,7 +4,7 @@ Inventory:
   items:
     1:
       action: SELECT_BUY
-      type: PLAYER_HEAD
+      type: SKULL_ITEM
       owner: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTZlMGQ1ZmU4N2QyZDIxZTJiZGU2Mzc0NDI1YTM0MWE3NTczYjM3NWQ1YmI3ZDQ3ZjRiOGRhZTM1Mjk3ZWE0In19fQ==
       name: '&aComprar'
       lore:
@@ -13,7 +13,7 @@ Inventory:
       slot: 12
     2:
       action: SELECT_SELL
-      type: PLAYER_HEAD
+      type: SKULL_ITEM
       owner: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjgzMjM2NjM5NjA3MDM2YzFiYTM5MWMyYjQ2YTljN2IwZWZkNzYwYzhiZmEyOTk2YTYwNTU1ODJiNGRhNSJ9fX0=
       name: '&cVender'
       lore:
@@ -22,7 +22,7 @@ Inventory:
       slot: 13
     3:
       action: SELECT_BOTH
-      type: PLAYER_HEAD
+      type: SKULL_ITEM
       owner: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTMzZTkyYjA2NTcxOTZjYmExODZjZTc0ZjIwMzhiOTNiZThlNDI1MWFlMmNhYTNlYmY1MWNkZWYwM2E3NDM4NCJ9fX0=
       name: '&eAmbos'
       lore:

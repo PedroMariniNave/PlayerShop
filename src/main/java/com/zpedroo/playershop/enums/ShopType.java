@@ -7,7 +7,7 @@ public enum ShopType {
     SELL(SELL_TRANSLATION),
     BOTH(BOTH_TRANSLATION);
 
-    private String translation;
+    private final String translation;
 
     ShopType(String translation) {
         this.translation = translation;

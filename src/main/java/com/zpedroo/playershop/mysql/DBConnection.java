@@ -13,8 +13,8 @@ public class DBConnection {
 
     protected static final String TABLE = "shop";
 
-    private HikariDataSource hikari;
-    private DBManager dbManager;
+    private final HikariDataSource hikari;
+    private final DBManager dbManager;
 
     public DBConnection(FileConfiguration file) {
         instance = this;
@@ -26,7 +26,7 @@ public class DBConnection {
     }
 
     private void enable(FileConfiguration file) {
-        hikari.setDataSourceClassName("com.mysql.cj.jdbc.MysqlDataSource");
+        hikari.setDataSourceClassName("com.mysql.jdbc.jdbc2.optional.MysqlDataSource");
         hikari.addDataSourceProperty("serverName", file.getString("MySQL.host"));
         hikari.addDataSourceProperty("port", file.getInt("MySQL.port"));
         hikari.addDataSourceProperty("databaseName", file.getString("MySQL.database"));

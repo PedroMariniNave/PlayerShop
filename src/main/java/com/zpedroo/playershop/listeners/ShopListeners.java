@@ -5,7 +5,6 @@ import com.zpedroo.playershop.enums.ShopType;
 import com.zpedroo.playershop.managers.ShopManager;
 import com.zpedroo.playershop.objects.Shop;
 import com.zpedroo.playershop.utils.menu.Menus;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,9 +36,15 @@ public class ShopListeners implements Listener {
         ShopType type = shop.getType();
 
         switch (type) {
-            case BUY -> Menus.getInstance().openShopMenu(player, shop, shop.getDefaultAmount(), ShopAction.BUY);
-            case SELL -> Menus.getInstance().openShopMenu(player, shop, shop.getDefaultAmount(), ShopAction.SELL);
-            case BOTH -> Menus.getInstance().openChooseMenu(player, shop);
+            case BUY:
+                Menus.getInstance().openShopMenu(player, shop, shop.getDefaultAmount(), ShopAction.BUY);
+                break;
+            case SELL:
+                Menus.getInstance().openShopMenu(player, shop, shop.getDefaultAmount(), ShopAction.SELL);
+                break;
+            case BOTH:
+                Menus.getInstance().openChooseMenu(player, shop);
+                break;
         }
     }
 
@@ -61,7 +66,7 @@ public class ShopListeners implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onDespawn(ItemDespawnEvent event) {
-        if (!StringUtils.equals(event.getEntity().getName(), "Shop Item")) return;
+        if (!event.getEntity().hasMetadata("***")) return;
 
         event.setCancelled(true);
     }

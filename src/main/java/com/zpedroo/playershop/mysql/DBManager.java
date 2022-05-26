@@ -21,24 +21,7 @@ import static com.zpedroo.playershop.utils.encoder.Base64Encoder.*;
 public class DBManager extends ShopManager {
 
     public void saveShop(Shop shop) {
-        if (contains(serializeLocation(shop.getLocation()), "location")) {
-            String query = "UPDATE `" + DBConnection.TABLE + "` SET" +
-                    "`location`='" + serializeLocation(shop.getLocation()) + "', " +
-                    "`uuid`='" + shop.getOwnerUUID().toString() + "', " +
-                    "`item`='" + itemStackArrayToBase64(new ItemStack[]{ shop.getItem() }) + "', " +
-                    "`currency`='" + shop.getCurrency().getFileName() + "', " +
-                    "`buy_price`='" + shop.getBuyPrice().toString() + "', " +
-                    "`sell_price`='" + shop.getSellPrice().toString() + "', " +
-                    "`amount`='" + shop.getDefaultAmount().toString() + "', " +
-                    "`type`='" + shop.getType().toString() + "', " +
-                    "`chest`='" + toBase64(shop.getChestInventory()) + "', " +
-                    "`display`='" + shop.getDisplay().toString() + "' " +
-                    "WHERE `location`='" + serializeLocation(shop.getLocation()) + "';";
-            executeUpdate(query);
-            return;
-        }
-
-        String query = "INSERT INTO `" + DBConnection.TABLE + "` (`location`, `uuid`, `item`, `currency`, `buy_price`, `sell_price`, `amount`, `type`, `chest`, `display`) VALUES " +
+        executeUpdate("REPLACE INTO `" + DBConnection.TABLE + "` (`location`, `uuid`, `item`, `currency`, `buy_price`, `sell_price`, `amount`, `type`, `chest`, `display`) VALUES " +
                 "('" + serializeLocation(shop.getLocation()) + "', " +
                 "'" + shop.getOwnerUUID().toString() + "', " +
                 "'" + itemStackArrayToBase64(new ItemStack[]{ shop.getItem() }) + "', " +
@@ -48,17 +31,15 @@ public class DBManager extends ShopManager {
                 "'" + shop.getDefaultAmount().toString() + "', " +
                 "'" + shop.getType().toString() + "', " +
                 "'" + toBase64(shop.getChestInventory()) + "', " +
-                "'" + shop.getDisplay().toString() + "');";
-        executeUpdate(query);
+                "'" + shop.getDisplay().toString() + "');");
     }
 
     public void deleteShop(Location location) {
-        String query = "DELETE FROM `" + DBConnection.TABLE + "` WHERE `location`='" + serializeLocation(location) + "';";
-        executeUpdate(query);
+        executeUpdate("DELETE FROM `" + DBConnection.TABLE + "` WHERE `location`='" + serializeLocation(location) + "';");
     }
 
     public HashMap<Location, Shop> getShops() {
-        HashMap<Location, Shop> shops = new HashMap<>(5120);
+        HashMap<Location, Shop> shops = new HashMap<>(128);
 
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -91,25 +72,6 @@ public class DBManager extends ShopManager {
         }
 
         return shops;
-    }
-
-    private Boolean contains(String value, String column) {
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet result = null;
-        String query = "SELECT `" + column + "` FROM `" + DBConnection.TABLE + "` WHERE `" + column + "`='" + value + "';";
-        try {
-            connection = getConnection();
-            preparedStatement = connection.prepareStatement(query);
-            result = preparedStatement.executeQuery();
-            return result.next();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            closeConnections(connection, result, preparedStatement, null);
-        }
-
-        return false;
     }
 
     private void executeUpdate(String query) {

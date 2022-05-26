@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="PlotSquared (2)">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/src/main/resources/libraries/PlotSquared.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -13,16 +13,16 @@ import java.util.UUID;
 
 public class ShopCreator {
 
-    private UUID ownerUUID;
-    private Location location;
-    private ItemStack item;
+    private final UUID ownerUUID;
+    private final Location location;
+    private final ItemStack item;
     private Currency currency;
     private BigInteger buyPrice;
     private BigInteger sellPrice;
-    private Integer amount;
+    private final int amount;
     private ShopType type;
 
-    public ShopCreator(Location location, UUID ownerUUID, ItemStack item, Currency currency, BigInteger buyPrice, BigInteger sellPrice, Integer amount, ShopType type) {
+    public ShopCreator(Location location, UUID ownerUUID, ItemStack item, Currency currency, BigInteger buyPrice, BigInteger sellPrice, int amount, ShopType type) {
         this.location = location;
         this.ownerUUID = ownerUUID;
         this.item = item;

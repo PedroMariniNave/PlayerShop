@@ -4,12 +4,11 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.zpedroo.playershop.commands.CreateShopCmd;
 import com.zpedroo.playershop.hooks.ProtocolLibHook;
-import com.zpedroo.playershop.hooks.VaultHook;
-import com.zpedroo.playershop.hooks.WorldGuardHook;
 import com.zpedroo.playershop.listeners.PlayerChatListener;
 import com.zpedroo.playershop.listeners.ShopListeners;
 import com.zpedroo.playershop.managers.ShopManager;
 import com.zpedroo.playershop.mysql.DBConnection;
+import com.zpedroo.playershop.utils.FileUtils;
 import com.zpedroo.playershop.utils.formatter.NumberFormatter;
 import com.zpedroo.playershop.utils.menu.Menus;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -35,8 +34,6 @@ public class PlayerShop extends JavaPlugin {
         new DBConnection(getConfig());
         new NumberFormatter(getConfig());
         new Menus();
-        new VaultHook();
-        new WorldGuardHook();
 
         ProtocolLibrary.getProtocolManager().addPacketListener(new ProtocolLibHook(this, PacketType.Play.Client.LOOK));
 
@@ -49,9 +46,10 @@ public class PlayerShop extends JavaPlugin {
 
         try {
             ShopManager.getInstance().saveAll();
+            ShopManager.getInstance().clearAll();
             DBConnection.getInstance().closeConnection();
         } catch (Exception ex) {
-            getLogger().log(Level.SEVERE, "An error ocurred while trying to save data!");
+            getLogger().log(Level.SEVERE, "An error occurred while trying to save data!");
             ex.printStackTrace();
         }
     }

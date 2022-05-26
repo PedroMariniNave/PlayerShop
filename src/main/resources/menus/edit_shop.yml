@@ -6,7 +6,7 @@ Inventory:
       slot: 3
     1:
       action: EDIT_DISPLAY
-      type: PLAYER_HEAD
+      type: SKULL_ITEM
       owner: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDUyZWZhZDFiZTg0ZTA4ODliYjJhNTgxYTVlNjY1YWEwNzA2MjIyNjBmYmY2YzFlYjhkOTMxYTEyNjdhNTRiYSJ9fX0=
       name: '&aDisplay'
       lore:
@@ -23,7 +23,7 @@ Inventory:
       slot: 20
     3:
       action: BUY_PRICE
-      type: PLAYER_HEAD
+      type: SKULL_ITEM
       owner: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTZlMGQ1ZmU4N2QyZDIxZTJiZGU2Mzc0NDI1YTM0MWE3NTczYjM3NWQ1YmI3ZDQ3ZjRiOGRhZTM1Mjk3ZWE0In19fQ==
       name: '&aPreço de Compra'
       lore:
@@ -34,7 +34,7 @@ Inventory:
       slot: 21
     4:
       action: SELL_PRICE
-      type: PLAYER_HEAD
+      type: SKULL_ITEM
       owner: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjgzMjM2NjM5NjA3MDM2YzFiYTM5MWMyYjQ2YTljN2IwZWZkNzYwYzhiZmEyOTk2YTYwNTU1ODJiNGRhNSJ9fX0=
       name: '&aPreço de Venda'
       lore:
@@ -45,7 +45,7 @@ Inventory:
       slot: 23
     5:
       action: EDIT_AMOUNT
-      type: PLAYER_HEAD
+      type: SKULL_ITEM
       owner: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTFmNTE0NmM1NDIwMWRjYjc4ZjljYjE4ZjA5YWFlZGVkODM4OWE1NTc2ODZhZmE4NzNiNGIzYmViZjk3MDE1NCJ9fX0=
       name: '&aQuantidade'
       lore:
@@ -56,7 +56,7 @@ Inventory:
       slot: 22
     6:
       action: EDIT_TYPE
-      type: PLAYER_HEAD
+      type: SKULL_ITEM
       owner: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTczZWRiYjVlZTNlNmFiOTVhMzgwMTgyYWMxZWRkOTQ3Y2FkYWQ0ZDMwNWZiYjVmMTBmZDIyMTkwN2I3OGRiZCJ9fX0=
       name: '&aTipo'
       lore:
@@ -67,7 +67,7 @@ Inventory:
       slot: 24
     7:
       action: EDIT_CURRENCY
-      type: PLAYER_HEAD
+      type: SKULL_ITEM
       owner: eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTQ1ZjQ3ZmViNGQ3NWNiMzMzOTE0YmZkYjk5OWE0ODljOWQwZTMyMGQ1NDhmMzEwNDE5YWQ3MzhkMWUyNGI5In19fQ==
       name: '&aMoeda'
       lore:

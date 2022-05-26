@@ -10,7 +10,8 @@ public class InventoryManager {
         int found = 0;
 
         for (ItemStack items : inventory.getContents()) {
-            if (item.isSimilar(items)) {
+            if (items == null || item.getType().equals(Material.AIR)) continue;
+            if (items.isSimilar(item)) {
                 found += items.getAmount();
             }
         }
@@ -18,13 +19,20 @@ public class InventoryManager {
         return found >= amount;
     }
 
-    public static boolean hasSpace(Inventory inventory, int slotsFree) {
+    public static int getFreeSpace(Inventory inventory, ItemStack item) {
         int free = 0;
 
-        for (ItemStack item : inventory.getContents()) {
-            if (item == null || item.getType().equals(Material.AIR)) free += 1;
+        for (ItemStack items : inventory.getContents()) {
+            if (items == null || items.getType().equals(Material.AIR)) {
+                free += item.getMaxStackSize();
+                continue;
+            }
+
+            if (!items.isSimilar(item)) continue;
+
+            free += item.getMaxStackSize() - items.getAmount();
         }
 
-        return slotsFree >= free;
+        return free;
     }
 }
